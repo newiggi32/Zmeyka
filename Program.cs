@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 
 namespace Змейка
@@ -10,14 +10,20 @@ namespace Змейка
         public static ConsoleKeyInfo memory;
         public static int[] snakeX = new int[128];
         public static int[] snakeY = new int[128];
+        public static bool crash = false;
 
         static void Main(string[] args)
         {
-            CreateMass();
+            int slojnost;
+            Console.WriteLine("Введите уровень сложности (1-3)");
+            slojnost = Convert.ToInt32(Console.ReadLine());
+            Console.Clear();
+
+            CreateMass(slojnost);
             Outmass();
             Zmeyka();
         }
-        public static ConsoleKeyInfo move() //отлов нажатия
+        public static ConsoleKeyInfo move()
         {
             ConsoleKeyInfo cki;
             cki = Console.ReadKey();
@@ -27,7 +33,7 @@ namespace Змейка
 
         public static char[,] Zmeyka()
         {
-            while (x != 0 && y != 0 && x != 9 && y != 9)
+            while (x != 0 && y != 0 && x != 9 && y != 9 && crash == false)
             {
                 if (Console.KeyAvailable == true)
                 {
@@ -39,7 +45,7 @@ namespace Змейка
                         if (n == 0)
                             mass[x, y] = ' ';
                         y -= 1;
-
+                        mass[x, y] = 'X';
                     }
                     else if (cki.Key.ToString() == "W")
                     {
@@ -48,7 +54,7 @@ namespace Змейка
                         if (n == 0)
                             mass[x, y] = ' ';
                         x -= 1;
-
+                        mass[x, y] = 'X';
                     }
                     else if (cki.Key.ToString() == "S")
                     {
@@ -57,7 +63,7 @@ namespace Змейка
                         if (n == 0)
                             mass[x, y] = ' ';
                         x += 1;
-
+                        mass[x, y] = 'X';
                     }
                     else if (cki.Key.ToString() == "D")
                     {
@@ -66,7 +72,7 @@ namespace Змейка
                         if (n == 0)
                             mass[x, y] = ' ';
                         y += 1;
-
+                        mass[x, y] = 'X';
                     }
 
                 }
@@ -79,7 +85,7 @@ namespace Змейка
                         if (n == 0)
                             mass[x, y] = ' ';
                         y -= 1;
-
+                        mass[x, y] = 'X';
                     }
                     else if (memory.Key.ToString() == "W")
                     {
@@ -88,7 +94,7 @@ namespace Змейка
                         if (n == 0) 
                             mass[x, y] = ' ';
                         x -= 1;
-
+                        mass[x, y] = 'X';
                     }
                     else if (memory.Key.ToString() == "S")
                     {
@@ -97,7 +103,7 @@ namespace Змейка
                         if (n == 0) 
                             mass[x, y] = ' ';
                         x += 1;
-
+                        mass[x, y] = 'X';
                     }
                     else if (memory.Key.ToString() == "D")
                     {
@@ -106,7 +112,7 @@ namespace Змейка
                         if (n == 0) 
                             mass[x, y] = ' ';
                         y += 1;
-                        
+                        mass[x, y] = 'X';
                     }
                 }
 
@@ -118,19 +124,26 @@ namespace Змейка
 
                 Console.SetCursorPosition(0, 0);
                 Outmass();
-                Thread.Sleep(700);
+
+                for (int i = 1; i < n - 1; i++)
+                {
+                    if (x == snakeX[i] && y == snakeY[i])
+                    {
+                        crash = true;
+                    }
+                }
+
+                Thread.Sleep(300);
             }
             Console.WriteLine("Defeat");
             return mass;
         }
-
         public static void Movehvost() 
         {
             for (int i = 0; i < n; i++)
             {
                 mass[snakeX[i], snakeY[i]] = ' ';
             }
-
 
             for (int i = n; i >= 1; i--)
             {
@@ -143,7 +156,7 @@ namespace Змейка
 
             for (int i = 0; i < n; i++)
             {
-                mass[snakeX[i], snakeY[i]] = 'x';
+                mass[snakeX[i], snakeY[i]] = '*';
             }
         }
         public static void Plushvost() 
@@ -158,19 +171,32 @@ namespace Змейка
         A:
             q = rand.Next(1, 9);
             z = rand.Next(1, 9);
-            if (x == q && y == z)
+
+            for (int i = 0; i < n; i++)
+            {
+                if(q == snakeX[i] && z == snakeY[i])               
+                    goto A;                
+            }
+
+            if (x == q && y == z )
             {
                 goto A;
             }
+
             else
             {
                 mass[q, z] = 'O';
             }
             return mass;
         }
-        public static char[,] CreateMass() //стартовый массив
+        public static char[,] CreateMass(int sloj)
         {
-
+            //int pole;
+            //switch(slo)
+            //{
+            //    default:
+            //        break;
+            //}
             for (int i = 0; i < 10; i++)
             {
                 for (int j = 0; j < 10; j++)
@@ -221,7 +247,5 @@ namespace Змейка
 
             return mass;
         }
-    
-
     }
 }
